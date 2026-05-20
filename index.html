@@ -998,13 +998,13 @@
         fields.forEach(f => { f.value = ''; });
       } else {
         const data = await res.json();
-        showError(data?.errors?.[0]?.message || 'Something went wrong. Please email us directly at info@nordlink.ca');
+        showError(data?.errors?.[0]?.message || 'Something went wrong. Please email us directly at prateek.kumar@nordlink.ca');
         btn.textContent = 'Send Message';
         btn.style.background = '';
         btn.disabled = false;
       }
     } catch (e) {
-      showError('Network error — please email us directly at info@nordlink.ca');
+      showError('Network error — please email us directly at prateek.kumar@nordlink.ca');
       btn.textContent = 'Send Message';
       btn.style.background = '';
       btn.disabled = false;
