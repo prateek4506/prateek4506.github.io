@@ -664,7 +664,7 @@
 
   <footer>
     <div class="footer-logo">Nord<span>link</span></div>
-    <p>© 2025 Nordlink · British Columbia, Canada · All rights reserved.</p>
+    <p>© 2025 Nordlink (13141098 Canada Inc.) · British Columbia, Canada · All rights reserved.</p>
   </footer>
 
 </div>
@@ -813,7 +813,7 @@
 
   <footer>
     <div class="footer-logo">Nord<span>link</span></div>
-    <p>© 2025 Nordlink · British Columbia, Canada · All rights reserved.</p>
+    <p>© 2025 Nordlink (13141098 Canada Inc.) · British Columbia, Canada · All rights reserved.</p>
   </footer>
 
 </div>
@@ -840,14 +840,14 @@
           <div class="contact-detail-icon">✉️</div>
           <div class="contact-detail-text">
             <label>Email</label>
-            <span>prateek.kumar@nordlink.ca</span>
+            <span>info@nordlink.ca</span>
           </div>
         </div>
         <div class="contact-detail">
           <div class="contact-detail-icon">🏢</div>
           <div class="contact-detail-text">
             <label>Legal Entity</label>
-            <span>Nordlink</span>
+            <span>13141098 Canada Inc. (operating as Nordlink)</span>
           </div>
         </div>
         <div class="contact-detail">
@@ -897,14 +897,15 @@
         <label class="field-label">Tell us about your project</label>
         <textarea rows="4" placeholder="Brief description of your initiative, timeline, and any procurement context..."></textarea>
       </div>
-      <button class="form-submit" onclick="handleSubmit()">Send Message</button>
+      <div id="form-error" style="display:none; color:#c0392b; font-size:0.82rem; margin-bottom:0.75rem; padding:0.6rem 1rem; background:#fdf2f2; border-radius:2px; border-left:3px solid #c0392b;"></div>
+      <button class="form-submit" id="submitBtn" onclick="handleSubmit()">Send Message</button>
       <p class="form-note">Your information is kept strictly confidential and is never shared with third parties.</p>
     </div>
   </div>
 
   <footer>
     <div class="footer-logo">Nord<span>link</span></div>
-    <p>© 2025 Nordlink · British Columbia, Canada · All rights reserved.</p>
+    <p>© 2025 Nordlink (13141098 Canada Inc.) · British Columbia, Canada · All rights reserved.</p>
   </footer>
 
 </div>
@@ -946,17 +947,81 @@
     }
   }
 
-  // Form submit mock
-  function handleSubmit() {
-    const btn = document.querySelector('.form-submit');
-    btn.textContent = 'Message Sent ✓';
-    btn.style.background = '#2d7a4f';
+  // Form submit — sends to Formspree
+  async function handleSubmit() {
+    const btn = document.getElementById('submitBtn');
+    const errorDiv = document.getElementById('form-error');
+
+    // Gather fields
+    const fields = document.querySelectorAll('#page-contact input, #page-contact select, #page-contact textarea');
+    const [firstName, lastName, org, email, service, message] = fields;
+
+    // Basic validation
+    errorDiv.style.display = 'none';
+    if (!firstName.value.trim() || !lastName.value.trim()) {
+      showError('Please enter your first and last name.'); return;
+    }
+    if (!email.value.trim() || !email.value.includes('@')) {
+      showError('Please enter a valid email address.'); return;
+    }
+    if (!org.value.trim()) {
+      showError('Please enter your government organization.'); return;
+    }
+    if (!service.value) {
+      showError('Please select an area of interest.'); return;
+    }
+    if (!message.value.trim()) {
+      showError('Please briefly describe your project.'); return;
+    }
+
+    // Send
+    btn.textContent = 'Sending…';
     btn.disabled = true;
+
+    try {
+      const res = await fetch('https://formspree.io/f/xeoqgkbq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          firstName: firstName.value.trim(),
+          lastName: lastName.value.trim(),
+          organization: org.value.trim(),
+          email: email.value.trim(),
+          service: service.value,
+          message: message.value.trim()
+        })
+      });
+
+      if (res.ok) {
+        btn.textContent = 'Message Sent ✓';
+        btn.style.background = '#2d7a4f';
+        fields.forEach(f => { f.value = ''; });
+      } else {
+        const data = await res.json();
+        showError(data?.errors?.[0]?.message || 'Something went wrong. Please email us directly at info@nordlink.ca');
+        btn.textContent = 'Send Message';
+        btn.style.background = '';
+        btn.disabled = false;
+      }
+    } catch (e) {
+      showError('Network error — please email us directly at info@nordlink.ca');
+      btn.textContent = 'Send Message';
+      btn.style.background = '';
+      btn.disabled = false;
+    }
+
     setTimeout(() => {
       btn.textContent = 'Send Message';
       btn.style.background = '';
       btn.disabled = false;
-    }, 3000);
+    }, 5000);
+  }
+
+  function showError(msg) {
+    const errorDiv = document.getElementById('form-error');
+    errorDiv.textContent = msg;
+    errorDiv.style.display = 'block';
+    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 </script>
 </body>
