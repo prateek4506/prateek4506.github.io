@@ -443,6 +443,47 @@
   .footer-logo span { color: var(--gold); }
   footer p { font-weight: 300; }
 
+  /* ── CUSTOM CURSOR ── */
+  @media (pointer: fine) {
+    * { cursor: none !important; }
+    .cursor {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+    .cursor-ring {
+      position: absolute;
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s var(--ease), height 0.3s var(--ease),
+                  border-color 0.3s, opacity 0.3s;
+      opacity: 0.7;
+    }
+    .cursor-dot {
+      position: absolute;
+      width: 5px; height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+    }
+    body.cursor-hover .cursor-ring {
+      width: 56px; height: 56px;
+      border-color: var(--gold);
+      opacity: 0.4;
+    }
+    body.cursor-hover .cursor-dot {
+      width: 7px; height: 7px;
+      background: var(--gold);
+    }
+    body.cursor-clicking .cursor-ring {
+      width: 24px; height: 24px;
+      opacity: 1;
+    }
+  }
+
   /* ── MOBILE NAV ── */
   .hamburger {
     display: none; flex-direction: column; gap: 5px;
@@ -452,6 +493,34 @@
     width: 24px; height: 1.5px; background: var(--ink);
     transition: transform 0.3s, opacity 0.3s;
     display: block;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .mobile-nav-overlay {
+    display: none;
+    position: fixed; top: 65px; left: 0; right: 0; bottom: 0;
+    background: rgba(13,17,23,0.4);
+    z-index: 98;
+    backdrop-filter: blur(2px);
+  }
+  .mobile-nav-overlay.open { display: block; }
+
+  .nav-links.mobile-open {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed; top: 65px; left: 0; right: 0;
+    background: white; padding: 1.5rem 2rem;
+    gap: 1.2rem;
+    border-bottom: 1px solid var(--border-soft);
+    z-index: 99;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    animation: slideDown 0.25s var(--ease) forwards;
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* ── ANIMATIONS ── */
@@ -502,8 +571,12 @@
 
 <!-- CURSOR -->
 <div class="cursor" id="cursor">
+  <div class="cursor-ring" id="cursorRing"></div>
   <div class="cursor-dot" id="cursorDot"></div>
 </div>
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="mobile-nav-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
 
 <!-- NAV -->
 <nav id="navbar">
@@ -518,20 +591,13 @@
   </div>
 </nav>
 
-<!-- ══════════════════════════════════════
-     HOME PAGE
-══════════════════════════════════════ -->
+<!-- HOME PAGE -->
 <div class="page active" id="page-home">
-
   <section class="hero">
     <div class="hero-left">
       <div class="hero-eyebrow fade-up">Canadian Government Technology Consulting</div>
-      <h1 class="fade-up">
-        The <em>right moment</em><br>for digital transformation
-      </h1>
-      <p class="hero-desc fade-up">
-        Nordlink delivers enterprise-grade AI, Microsoft Dynamics 365, and CRM solutions purpose-built for Canadian federal and provincial government — bridging SAP expertise with next-generation agentic technology.
-      </p>
+      <h1 class="fade-up">The <em>right moment</em><br>for digital transformation</h1>
+      <p class="hero-desc fade-up">Nordlink delivers enterprise-grade AI, Microsoft Dynamics 365, and CRM solutions purpose-built for Canadian federal and provincial government — bridging SAP expertise with next-generation agentic technology.</p>
       <div class="hero-actions fade-up">
         <a href="#" class="btn-primary" onclick="showPage('services')">Our Services</a>
         <a href="#" class="btn-outline" onclick="showPage('contact')">Start a Conversation</a>
@@ -540,26 +606,19 @@
     <div class="hero-right">
       <div class="hero-graphic">
         <svg viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Outer ring -->
           <circle cx="190" cy="190" r="170" stroke="#B8975A" stroke-width="0.5" stroke-dasharray="4 8" opacity="0.3"/>
-          <!-- Mid ring -->
           <circle cx="190" cy="190" r="120" stroke="#B8975A" stroke-width="0.5" opacity="0.2"/>
-          <!-- Inner ring -->
           <circle cx="190" cy="190" r="70" stroke="#B8975A" stroke-width="1" opacity="0.4"/>
-          <!-- Center -->
           <circle cx="190" cy="190" r="18" fill="#B8975A" opacity="0.15"/>
           <circle cx="190" cy="190" r="6" fill="#B8975A"/>
-          <!-- Connecting lines -->
           <line x1="190" y1="20" x2="190" y2="120" stroke="#B8975A" stroke-width="0.8" opacity="0.4"/>
           <line x1="190" y1="260" x2="190" y2="360" stroke="#B8975A" stroke-width="0.8" opacity="0.4"/>
           <line x1="20" y1="190" x2="120" y2="190" stroke="#B8975A" stroke-width="0.8" opacity="0.4"/>
           <line x1="260" y1="190" x2="360" y2="190" stroke="#B8975A" stroke-width="0.8" opacity="0.4"/>
-          <!-- Diagonal lines -->
           <line x1="70" y1="70" x2="140" y2="140" stroke="#B8975A" stroke-width="0.5" opacity="0.25"/>
           <line x1="240" y1="240" x2="310" y2="310" stroke="#B8975A" stroke-width="0.5" opacity="0.25"/>
           <line x1="310" y1="70" x2="240" y2="140" stroke="#B8975A" stroke-width="0.5" opacity="0.25"/>
           <line x1="70" y1="310" x2="140" y2="240" stroke="#B8975A" stroke-width="0.5" opacity="0.25"/>
-          <!-- Node dots -->
           <circle cx="190" cy="20" r="4" fill="#B8975A" opacity="0.6"/>
           <circle cx="190" cy="360" r="4" fill="#B8975A" opacity="0.6"/>
           <circle cx="20" cy="190" r="4" fill="#B8975A" opacity="0.6"/>
@@ -568,7 +627,6 @@
           <circle cx="310" cy="70" r="3" fill="#B8975A" opacity="0.4"/>
           <circle cx="70" cy="310" r="3" fill="#B8975A" opacity="0.4"/>
           <circle cx="310" cy="310" r="3" fill="#B8975A" opacity="0.4"/>
-          <!-- Text label -->
           <text x="190" y="218" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="9" fill="#B8975A" opacity="0.7" letter-spacing="3">NORDLINK</text>
         </svg>
       </div>
@@ -576,18 +634,9 @@
   </section>
 
   <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-num">15+</div>
-      <div class="stat-label">Years Enterprise Experience</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">BC</div>
-      <div class="stat-label">Canadian-Incorporated & Operated</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">Gov</div>
-      <div class="stat-label">Federal & Provincial Expertise</div>
-    </div>
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Years Enterprise Experience</div></div>
+    <div class="stat"><div class="stat-num">BC</div><div class="stat-label">Canadian-Incorporated & Operated</div></div>
+    <div class="stat"><div class="stat-num">Gov</div><div class="stat-label">Federal & Provincial Expertise</div></div>
   </div>
 
   <section class="section">
@@ -596,21 +645,9 @@
       <h2 class="section-title">Built for <em>government-grade</em> complexity</h2>
       <p class="section-sub">We bring SAP consulting rigour and Microsoft Dynamics expertise to the next wave of public sector digital transformation — including AI and agentic automation.</p>
       <div class="pillars">
-        <div class="pillar">
-          <div class="pillar-num">01</div>
-          <h3>Agentic AI for Government</h3>
-          <p>Purpose-built AI solutions that automate complex public sector workflows — procurement, case management, document processing — with full auditability and compliance.</p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-num">02</div>
-          <h3>Microsoft Dynamics 365</h3>
-          <p>CRM strategy, implementation, and optimization for federal and provincial agencies. We translate government requirements into scalable, maintainable D365 architecture.</p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-num">03</div>
-          <h3>ERP & SAP Consulting</h3>
-          <p>Enterprise resource planning advisory and implementation with deep SAP expertise — from requirements gathering through vendor selection and Phase 0 delivery.</p>
-        </div>
+        <div class="pillar"><div class="pillar-num">01</div><h3>Agentic AI for Government</h3><p>Purpose-built AI solutions that automate complex public sector workflows — procurement, case management, document processing — with full auditability and compliance.</p></div>
+        <div class="pillar"><div class="pillar-num">02</div><h3>Microsoft Dynamics 365</h3><p>CRM strategy, implementation, and optimization for federal and provincial agencies. We translate government requirements into scalable, maintainable D365 architecture.</p></div>
+        <div class="pillar"><div class="pillar-num">03</div><h3>ERP & SAP Consulting</h3><p>Enterprise resource planning advisory and implementation with deep SAP expertise — from requirements gathering through vendor selection and Phase 0 delivery.</p></div>
       </div>
     </div>
   </section>
@@ -623,27 +660,9 @@
           <h2 class="section-title">Enterprise expertise.<br><em>Boutique agility.</em></h2>
           <p class="section-sub">Government evaluators get the rigour of a Big Four engagement at a fraction of the cost — delivered by specialists, not generalists.</p>
           <div class="why-items">
-            <div class="why-item">
-              <div class="why-icon">🇨🇦</div>
-              <div class="why-item-text">
-                <h4>Canadian-incorporated, Buy Canadian preferred</h4>
-                <p>Incorporated in British Columbia. We meet Buy Canadian procurement preferences — a growing advantage in post-2025 federal policy.</p>
-              </div>
-            </div>
-            <div class="why-item">
-              <div class="why-icon">🔒</div>
-              <div class="why-item-text">
-                <h4>Security-ready</h4>
-                <p>Experienced working within Government of Canada security frameworks. Resources available with Reliability and Secret clearance eligibility.</p>
-              </div>
-            </div>
-            <div class="why-item">
-              <div class="why-icon">⚡</div>
-              <div class="why-item-text">
-                <h4>Fast mobilization</h4>
-                <p>No large firm overhead. We mobilize quickly, communicate directly, and adapt to government timelines — without the bureaucracy layer.</p>
-              </div>
-            </div>
+            <div class="why-item"><div class="why-icon">🇨🇦</div><div class="why-item-text"><h4>Canadian-incorporated, Buy Canadian preferred</h4><p>Incorporated in British Columbia. We meet Buy Canadian procurement preferences — a growing advantage in post-2025 federal policy.</p></div></div>
+            <div class="why-item"><div class="why-icon">🔒</div><div class="why-item-text"><h4>Security-ready</h4><p>Experienced working within Government of Canada security frameworks. Resources available with Reliability and Secret clearance eligibility.</p></div></div>
+            <div class="why-item"><div class="why-icon">⚡</div><div class="why-item-text"><h4>Fast mobilization</h4><p>No large firm overhead. We mobilize quickly, communicate directly, and adapt to government timelines — without the bureaucracy layer.</p></div></div>
           </div>
         </div>
         <div class="why-right">
@@ -666,14 +685,10 @@
     <div class="footer-logo">Nord<span>link</span></div>
     <p>© 2025 Nordlink (13141098 Canada Inc.) · British Columbia, Canada · All rights reserved.</p>
   </footer>
-
 </div>
 
-<!-- ══════════════════════════════════════
-     SERVICES PAGE
-══════════════════════════════════════ -->
+<!-- SERVICES PAGE -->
 <div class="page" id="page-services">
-
   <div class="services-hero">
     <div class="services-hero-inner">
       <div class="hero-eyebrow">Our Capabilities</div>
@@ -684,80 +699,38 @@
 
   <div class="services-grid">
     <div class="services-grid-inner">
-
       <div class="service-card">
-        <div class="service-left">
-          <div class="service-num">01</div>
-          <div class="service-tag">AI & Automation</div>
-        </div>
+        <div class="service-left"><div class="service-num">01</div><div class="service-tag">AI & Automation</div></div>
         <div class="service-right">
           <h3>Agentic AI for Government</h3>
           <p>We design, build, and deploy AI agents that automate high-volume, rules-based government workflows — procurement intake, case routing, document extraction, and more. Every solution is built with auditability, privacy compliance (PIPEDA/Privacy Act), and human-in-the-loop governance at its core.</p>
-          <div class="service-deliverables">
-            <span class="deliverable">Workflow Automation</span>
-            <span class="deliverable">AI Agent Design</span>
-            <span class="deliverable">Privacy-Compliant Architecture</span>
-            <span class="deliverable">LLM Integration</span>
-            <span class="deliverable">Change Management</span>
-          </div>
+          <div class="service-deliverables"><span class="deliverable">Workflow Automation</span><span class="deliverable">AI Agent Design</span><span class="deliverable">Privacy-Compliant Architecture</span><span class="deliverable">LLM Integration</span><span class="deliverable">Change Management</span></div>
         </div>
       </div>
-
       <div class="service-card">
-        <div class="service-left">
-          <div class="service-num">02</div>
-          <div class="service-tag">CRM & Dynamics 365</div>
-        </div>
+        <div class="service-left"><div class="service-num">02</div><div class="service-tag">CRM & Dynamics 365</div></div>
         <div class="service-right">
           <h3>Microsoft Dynamics 365 Implementation</h3>
           <p>From strategy and requirements through configuration, integration, and go-live, we deliver Dynamics 365 CRM and Power Platform solutions tailored to the unique needs of federal and provincial government stakeholders. We understand GCdocs, Azure Government, and the full Microsoft Government Cloud stack.</p>
-          <div class="service-deliverables">
-            <span class="deliverable">CRM Strategy</span>
-            <span class="deliverable">D365 Configuration</span>
-            <span class="deliverable">Power Platform</span>
-            <span class="deliverable">Azure Government</span>
-            <span class="deliverable">Data Migration</span>
-            <span class="deliverable">Training & Adoption</span>
-          </div>
+          <div class="service-deliverables"><span class="deliverable">CRM Strategy</span><span class="deliverable">D365 Configuration</span><span class="deliverable">Power Platform</span><span class="deliverable">Azure Government</span><span class="deliverable">Data Migration</span><span class="deliverable">Training & Adoption</span></div>
         </div>
       </div>
-
       <div class="service-card">
-        <div class="service-left">
-          <div class="service-num">03</div>
-          <div class="service-tag">ERP Advisory</div>
-        </div>
+        <div class="service-left"><div class="service-num">03</div><div class="service-tag">ERP Advisory</div></div>
         <div class="service-right">
           <h3>ERP Visioning & Procurement Advisory</h3>
           <p>We guide government organizations through Phase 0 ERP engagements — from current-state assessment and requirements gathering to RFP development and vendor evaluation. Our SAP background gives us deep insight into how enterprise vendors respond to government procurement.</p>
-          <div class="service-deliverables">
-            <span class="deliverable">Current-State Assessment</span>
-            <span class="deliverable">Requirements Gathering</span>
-            <span class="deliverable">RFP Development</span>
-            <span class="deliverable">Vendor Evaluation</span>
-            <span class="deliverable">SAP Advisory</span>
-          </div>
+          <div class="service-deliverables"><span class="deliverable">Current-State Assessment</span><span class="deliverable">Requirements Gathering</span><span class="deliverable">RFP Development</span><span class="deliverable">Vendor Evaluation</span><span class="deliverable">SAP Advisory</span></div>
         </div>
       </div>
-
       <div class="service-card">
-        <div class="service-left">
-          <div class="service-num">04</div>
-          <div class="service-tag">Strategy</div>
-        </div>
+        <div class="service-left"><div class="service-num">04</div><div class="service-tag">Strategy</div></div>
         <div class="service-right">
           <h3>Digital Transformation Strategy</h3>
           <p>For departments at the beginning of their modernization journey, we provide strategic advisory — technology roadmaps, business case development, architecture principles, and vendor-neutral guidance aligned with GC Digital Standards and TBS policy.</p>
-          <div class="service-deliverables">
-            <span class="deliverable">Technology Roadmaps</span>
-            <span class="deliverable">Business Case Development</span>
-            <span class="deliverable">Architecture Principles</span>
-            <span class="deliverable">GC Digital Standards</span>
-            <span class="deliverable">Stakeholder Facilitation</span>
-          </div>
+          <div class="service-deliverables"><span class="deliverable">Technology Roadmaps</span><span class="deliverable">Business Case Development</span><span class="deliverable">Architecture Principles</span><span class="deliverable">GC Digital Standards</span><span class="deliverable">Stakeholder Facilitation</span></div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -766,26 +739,10 @@
       <div class="section-tag">Our Approach</div>
       <h2 class="section-title">How we <em>work</em></h2>
       <div class="approach-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <h4>Discover</h4>
-          <p>Structured discovery workshops to map current state, constraints, stakeholders, and goals. No assumptions.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <h4>Define</h4>
-          <p>Requirements documentation, architecture options, and a clear recommended path with trade-offs articulated.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <h4>Deliver</h4>
-          <p>Iterative, milestone-based delivery. Regular check-ins with decision-makers. No surprises at go-live.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <h4>Sustain</h4>
-          <p>Knowledge transfer, documentation, and ongoing support options — so your team owns the outcome.</p>
-        </div>
+        <div class="step"><div class="step-num">01</div><h4>Discover</h4><p>Structured discovery workshops to map current state, constraints, stakeholders, and goals. No assumptions.</p></div>
+        <div class="step"><div class="step-num">02</div><h4>Define</h4><p>Requirements documentation, architecture options, and a clear recommended path with trade-offs articulated.</p></div>
+        <div class="step"><div class="step-num">03</div><h4>Deliver</h4><p>Iterative, milestone-based delivery. Regular check-ins with decision-makers. No surprises at go-live.</p></div>
+        <div class="step"><div class="step-num">04</div><h4>Sustain</h4><p>Knowledge transfer, documentation, and ongoing support options — so your team owns the outcome.</p></div>
       </div>
     </div>
   </div>
@@ -815,73 +772,31 @@
     <div class="footer-logo">Nord<span>link</span></div>
     <p>© 2025 Nordlink (13141098 Canada Inc.) · British Columbia, Canada · All rights reserved.</p>
   </footer>
-
 </div>
 
-<!-- ══════════════════════════════════════
-     CONTACT PAGE
-══════════════════════════════════════ -->
+<!-- CONTACT PAGE -->
 <div class="page" id="page-contact">
-
   <div class="contact-layout">
     <div class="contact-left">
       <div class="hero-eyebrow" style="color:var(--gold); margin-bottom:1.5rem;">Get in Touch</div>
       <h2>Let's build something <em>important</em> together.</h2>
       <p>Whether you're a government evaluator, procurement officer, or project lead — we'd like to hear about your initiative. We respond to all inquiries within one business day.</p>
       <div class="contact-details">
-        <div class="contact-detail">
-          <div class="contact-detail-icon">📍</div>
-          <div class="contact-detail-text">
-            <label>Location</label>
-            <span>Victoria / Vancouver, British Columbia, Canada</span>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-detail-icon">✉️</div>
-          <div class="contact-detail-text">
-            <label>Email</label>
-            <span>prateek.kumar@nordlink.ca</span>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-detail-icon">🏢</div>
-          <div class="contact-detail-text">
-            <label>Legal Entity</label>
-            <span>13141098 Canada Inc. (operating as Nordlink)</span>
-          </div>
-        </div>
-        <div class="contact-detail">
-          <div class="contact-detail-icon">🔗</div>
-          <div class="contact-detail-text">
-            <label>Procurement Registries</label>
-            <span>BC Bid · CanadaBuys (Ariba) · Innovate BC</span>
-          </div>
-        </div>
+        <div class="contact-detail"><div class="contact-detail-icon">📍</div><div class="contact-detail-text"><label>Location</label><span>Victoria / Vancouver, British Columbia, Canada</span></div></div>
+        <div class="contact-detail"><div class="contact-detail-icon">✉️</div><div class="contact-detail-text"><label>Email</label><span>prateek.kumar@nordlink.ca</span></div></div>
+        <div class="contact-detail"><div class="contact-detail-icon">🏢</div><div class="contact-detail-text"><label>Legal Entity</label><span>13141098 Canada Inc. (operating as Nordlink)</span></div></div>
+        <div class="contact-detail"><div class="contact-detail-icon">🔗</div><div class="contact-detail-text"><label>Procurement Registries</label><span>BC Bid · CanadaBuys (Ariba) · Innovate BC</span></div></div>
       </div>
     </div>
-
     <div class="contact-right">
       <h3>Send us a message</h3>
       <p class="form-sub">Tell us about your project, timeline, and what you're looking for. We'll follow up promptly.</p>
-
       <div class="form-group form-row">
-        <div>
-          <label class="field-label">First Name</label>
-          <input type="text" placeholder="Jane">
-        </div>
-        <div>
-          <label class="field-label">Last Name</label>
-          <input type="text" placeholder="Smith">
-        </div>
+        <div><label class="field-label">First Name</label><input type="text" placeholder="Jane"></div>
+        <div><label class="field-label">Last Name</label><input type="text" placeholder="Smith"></div>
       </div>
-      <div class="form-group">
-        <label class="field-label">Government Organization</label>
-        <input type="text" placeholder="e.g. Shared Services Canada">
-      </div>
-      <div class="form-group">
-        <label class="field-label">Email Address</label>
-        <input type="email" placeholder="jane.smith@canada.ca">
-      </div>
+      <div class="form-group"><label class="field-label">Government Organization</label><input type="text" placeholder="e.g. Shared Services Canada"></div>
+      <div class="form-group"><label class="field-label">Email Address</label><input type="email" placeholder="jane.smith@canada.ca"></div>
       <div class="form-group">
         <label class="field-label">Area of Interest</label>
         <select>
@@ -893,88 +808,91 @@
           <option>General Inquiry / Subcontract Opportunity</option>
         </select>
       </div>
-      <div class="form-group">
-        <label class="field-label">Tell us about your project</label>
-        <textarea rows="4" placeholder="Brief description of your initiative, timeline, and any procurement context..."></textarea>
-      </div>
+      <div class="form-group"><label class="field-label">Tell us about your project</label><textarea rows="4" placeholder="Brief description of your initiative, timeline, and any procurement context..."></textarea></div>
       <div id="form-error" style="display:none; color:#c0392b; font-size:0.82rem; margin-bottom:0.75rem; padding:0.6rem 1rem; background:#fdf2f2; border-radius:2px; border-left:3px solid #c0392b;"></div>
       <button class="form-submit" id="submitBtn" onclick="handleSubmit()">Send Message</button>
       <p class="form-note">Your information is kept strictly confidential and is never shared with third parties.</p>
     </div>
   </div>
-
   <footer>
     <div class="footer-logo">Nord<span>link</span></div>
     <p>© 2025 Nordlink (13141098 Canada Inc.) · British Columbia, Canada · All rights reserved.</p>
   </footer>
-
 </div>
 
 <script>
-  // Page navigation
   function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Navbar scroll effect
   window.addEventListener('scroll', () => {
     document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
   });
 
-  // Custom cursor
-  const dot = document.getElementById('cursorDot');
-  const cursor = document.getElementById('cursor');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function animateCursor() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-    requestAnimationFrame(animateCursor);
+  if (window.matchMedia('(pointer: fine)').matches) {
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    window.addEventListener('mousedown', () => document.body.classList.add('cursor-clicking'));
+    window.addEventListener('mouseup', () => document.body.classList.remove('cursor-clicking'));
+    document.querySelectorAll('a, button, .pillar, .sector-pill, .step, .service-card').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+    function animateCursor() {
+      rx += (mx - rx) * 0.14;
+      ry += (my - ry) * 0.14;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
   }
-  animateCursor();
 
-  // Mobile menu
   function toggleMobileMenu() {
     const links = document.querySelector('.nav-links');
-    if (links.style.display === 'flex') {
-      links.style.display = 'none';
+    const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobileOverlay');
+    if (links.classList.contains('mobile-open')) {
+      closeMobileMenu();
     } else {
-      links.style.cssText = 'display:flex; flex-direction:column; position:fixed; top:65px; left:0; right:0; background:white; padding:2rem; gap:1.5rem; border-bottom:1px solid #eee; z-index:99;';
+      links.classList.add('mobile-open');
+      hamburger.classList.add('open');
+      overlay.classList.add('open');
     }
   }
 
-  // Form submit — sends to Formspree
+  function closeMobileMenu() {
+    const links = document.querySelector('.nav-links');
+    const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('mobileOverlay');
+    links.classList.remove('mobile-open');
+    hamburger.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
   async function handleSubmit() {
     const btn = document.getElementById('submitBtn');
     const errorDiv = document.getElementById('form-error');
-
-    // Gather fields
     const fields = document.querySelectorAll('#page-contact input, #page-contact select, #page-contact textarea');
     const [firstName, lastName, org, email, service, message] = fields;
 
-    // Basic validation
     errorDiv.style.display = 'none';
-    if (!firstName.value.trim() || !lastName.value.trim()) {
-      showError('Please enter your first and last name.'); return;
-    }
-    if (!email.value.trim() || !email.value.includes('@')) {
-      showError('Please enter a valid email address.'); return;
-    }
-    if (!org.value.trim()) {
-      showError('Please enter your government organization.'); return;
-    }
-    if (!service.value) {
-      showError('Please select an area of interest.'); return;
-    }
-    if (!message.value.trim()) {
-      showError('Please briefly describe your project.'); return;
-    }
+    if (!firstName.value.trim() || !lastName.value.trim()) { showError('Please enter your first and last name.'); return; }
+    if (!email.value.trim() || !email.value.includes('@')) { showError('Please enter a valid email address.'); return; }
+    if (!org.value.trim()) { showError('Please enter your government organization.'); return; }
+    if (!service.value) { showError('Please select an area of interest.'); return; }
+    if (!message.value.trim()) { showError('Please briefly describe your project.'); return; }
 
-    // Send
     btn.textContent = 'Sending…';
     btn.disabled = true;
 
@@ -991,7 +909,6 @@
           message: message.value.trim()
         })
       });
-
       if (res.ok) {
         btn.textContent = 'Message Sent ✓';
         btn.style.background = '#2d7a4f';
@@ -999,22 +916,14 @@
       } else {
         const data = await res.json();
         showError(data?.errors?.[0]?.message || 'Something went wrong. Please email us directly at prateek.kumar@nordlink.ca');
-        btn.textContent = 'Send Message';
-        btn.style.background = '';
-        btn.disabled = false;
+        btn.textContent = 'Send Message'; btn.style.background = ''; btn.disabled = false;
       }
     } catch (e) {
       showError('Network error — please email us directly at prateek.kumar@nordlink.ca');
-      btn.textContent = 'Send Message';
-      btn.style.background = '';
-      btn.disabled = false;
+      btn.textContent = 'Send Message'; btn.style.background = ''; btn.disabled = false;
     }
 
-    setTimeout(() => {
-      btn.textContent = 'Send Message';
-      btn.style.background = '';
-      btn.disabled = false;
-    }, 5000);
+    setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; btn.disabled = false; }, 5000);
   }
 
   function showError(msg) {
